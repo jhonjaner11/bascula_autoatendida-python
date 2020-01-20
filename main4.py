@@ -29,8 +29,6 @@ def abrir_admin():
         b2 = AdminP(admin)
 
 
-
-
 class AdminP(ttk.Frame):
 
     def __init__(self,admin, *args, **kwargs):
@@ -112,52 +110,189 @@ class AdminFrame(ttk.Frame):
         ####################################################
         t_productos = Label(self, text = "Productos: ", relief="groove")
         t_productos.grid(row = 0, column = 0)
-        btn_nuevoP = Button(self, text = "Nuevo")
-        btn_borrarP = Button(self, text = "Borrar")
-        btn_editarP = Button(self, text = "Editar")
+        btn_nuevoP = Button(self, text = "Nuevo", command=self.abrir_producto)
+        btn_borrarP = Button(self, text = "Borrar", command=self.borrar_producto)
+        btn_editarP = Button(self, text = "Editar", command=self.editar_producto)
 
         btn_nuevoP.grid(row = 0, column = 1)
         btn_borrarP.grid(row = 0, column = 2)
-        btn_editarP.grid(row = 0, column = 3)
+        # btn_editarP.grid(row = 0, column = 3)
 
-        v_producto =tk.Listbox(self, height=len(productos),width=30)
-        v_producto.insert(0, *productos)
-        v_producto.grid(row = 2, column = 1, columnspan = 4,pady = 20)
+        self.v_producto =tk.Listbox(self, height=len(productos),width=30)
+        self.v_producto.insert(0, *productos)
+        self.v_producto.grid(row = 2, column = 1, columnspan = 4,pady = 20)
 
         ##############################################
         t_usuarios = Label(self, text = "Usuarios: ", relief="groove")
         t_usuarios.grid(row = 4, column = 0)
-        btn_nuevoU = Button(self, text = "Nuevo")
-        btn_borrarU = Button(self, text = "Borrar")
+        btn_nuevoU = Button(self, text = "Nuevo", command=self.abrir_usuario)
+        btn_borrarU = Button(self, text = "Borrar", command=self.borrar_usuario)
         btn_editarU = Button(self, text = "Editar")
 
         btn_nuevoU.grid(row = 4, column = 1)
         btn_borrarU.grid(row = 4, column = 2)
-        btn_editarU.grid(row = 4, column = 3)
+        # btn_editarU.grid(row = 4, column = 3)
 
-        v_usuario =tk.Listbox(self, height=len(usuarios),width=30)
-        v_usuario.insert(0, *usuarios)
-        v_usuario.grid(row = 6, column = 1, columnspan = 4,pady = 20)
+        self.v_usuario =tk.Listbox(self, height=len(usuarios),width=30)
+        self.v_usuario.insert(0, *usuarios)
+        self.v_usuario.grid(row = 6, column = 1, columnspan = 4,pady = 20)
 
         ###############################################################
 
 
         t_eventos = Label(self, text = "Eventos: ", relief="groove")
         t_eventos.grid(row = 9, column = 0, sticky = W, pady = 2)
-        btn_borrarE = Button(self, text = "Borrar")
-        btn_editarE = Button(self, text = "Editar")
+        btn_borrarE = Button(self, text = "Borrar", command=self.borrar_evento)
+        btn_borrarE.grid(row = 9, column = 1, sticky = E)
 
-        btn_borrarU.grid(row = 9, column = 1, sticky = E)
-        btn_editarU.grid(row = 9, column = 2, sticky = E)
+        btn_exportarE = Button(self, text = "Exportar csv", command=self.exportar_evento)
+        btn_exportarE.grid(row = 9, column = 2, sticky = E)
 
-        v_evento =tk.Listbox(self, height=len(eventos),width=30)
-        v_evento.insert(0, *eventos)
-        v_evento.grid(row = 11, column = 1, columnspan=4,pady = 20)
+        self.v_evento =tk.Listbox(self, height=len(eventos),width=60)
+        self.v_evento.insert(0, *eventos)
+        self.v_evento.grid(row = 11, column = 1, columnspan=4,pady = 20)
+
+
+    def abrir_producto(self):
+        self.p_ventana = tk.Toplevel()
+        texto = Label(self.p_ventana, text = "Producto nuevo: ", relief="groove")
+        texto.grid(row = 0, column = 0)
+
+        texto2 = Label(self.p_ventana, text = "Nombre Producto: ")
+        texto2.grid(row = 1, column = 0)
+        self.producto_nombre = Entry(self.p_ventana)
+        self.producto_nombre.grid(row = 1, column = 1)
+
+        texto3 = Label(self.p_ventana, text = "Codigo Producto: ")
+        texto3.grid(row = 2, column = 0)
+        self.producto_codigo = Entry(self.p_ventana)
+        self.producto_codigo.grid(row = 2, column = 1)
+
+        btn_nuevoP2 = Button(self.p_ventana, text = "Crear", command=self.nuevo_producto)
+        btn_nuevoP2.grid(row = 3, column = 1, sticky = E)
+
+
+    def editar_producto(self):
+        self.p_ventana = tk.Toplevel()
+        texto = Label(self.p_ventana, text = "Editar Producto: ", relief="groove")
+        texto.grid(row = 0, column = 0)
+
+        texto2 = Label(self.p_ventana, text = "Nombre Producto: ")
+        texto2.grid(row = 1, column = 0)
+        self.producto_nombre = Entry(self.p_ventana)
+        self.producto_nombre.grid(row = 1, column = 1)
+
+        texto3 = Label(self.p_ventana, text = "Codigo Producto: ")
+        texto3.grid(row = 2, column = 0)
+        self.producto_id = Entry(self.p_ventana)
+        self.producto_id.grid(row = 2, column = 1)
+
+
+
+        miPack=self.v_producto.get(ANCHOR)
+        id=miPack[0]
+        nombre=miPack[1]
+        self.producto_id.insert(0,id)
+        self.producto_nombre.insert(0,nombre)
+
+
+        btn_nuevoP2 = Button(self.p_ventana, text = "Modificar", command=self.modificar_producto)
+        btn_nuevoP2.grid(row = 3, column = 1, sticky = E)
+    def abrir_usuario(self):
+        self.u_ventana = tk.Toplevel()
+        texto = Label(self.u_ventana, text = "Usuario nuevo: ", relief="groove")
+        texto.grid(row = 0, column = 0)
+        texto2 = Label(self.u_ventana, text = "Nombre Usuario: ")
+        texto2.grid(row = 1, column = 0)
+        self.user_usuario = Entry(self.u_ventana)
+        self.user_usuario.grid(row = 1, column = 1)
+
+        texto3 = Label(self.u_ventana, text = "Contraseña Usuario: ")
+        texto3.grid(row = 2, column = 0)
+        self.pw_usuario = Entry(self.u_ventana)
+        self.pw_usuario.grid(row = 2, column = 1)
+        btn_nuevoP2 = Button(self.u_ventana, text = "Crear", command=self.nuevo_usuario)
+        btn_nuevoP2.grid(row = 3, column = 1)
+
+    def nuevo_producto(self):
+
+        con = sql_connection()
+        nombre=self.producto_nombre.get()
+        codigo=self.producto_codigo.get()
+        miPack=array([codigo,nombre])
+        res= crear_producto(con,miPack)
+        # self.v_producto.insert(END,miPack)
+        self.v_producto.delete(0, END)
+        productos= listar_productos(con)
+        self.v_producto.insert(0, *productos)
+        self.p_ventana.destroy()
+
+    def modificar_producto(self):
+
+        con = sql_connection()
+        # miPack = self.v_producto.get(ANCHOR)
+
+        nombre=self.producto_nombre.get()
+        codigo=self.producto_id.get()
+        miPack=array([codigo,nombre])
+        res= update_producto(con,miPack)
+        # self.v_producto.insert(END,miPack)
+        self.v_producto.delete(0, END)
+        productos= listar_productos(con)
+        self.v_producto.insert(0, *productos)
+        self.p_ventana.destroy()
+
+    def borrar_producto(self):
+        con = sql_connection()
+        miPack= self.v_producto.get(ANCHOR)
+        print(miPack)
+        res = eliminar_producto(con,miPack)
+        self.v_producto.delete(0, END)
+        productos= listar_productos(con)
+        self.v_producto.insert(0, *productos)
+        print(res)
+
+    def nuevo_usuario(self):
+
+        con = sql_connection()
+        user=self.user_usuario.get()
+        pw=self.pw_usuario.get()
+        miPack = array([user, pw])
+        res= crear_usuario(con,miPack)
+        # self.v_producto.insert(END,miPack)
+        self.v_usuario.delete(0, END)
+        usuarios= listar_usuarios(con)
+        self.v_usuario.insert(0, *usuarios)
+        self.u_ventana.destroy()
+
+    def borrar_usuario(self):
+        con = sql_connection()
+        miPack= self.v_usuario.get(ANCHOR)
+        user= miPack[0]
+        res = eliminar_usuario(con,miPack)
+        self.v_usuario.delete(0, END)
+        usuarios= listar_usuarios(con)
+        self.v_usuario.insert(0, *usuarios)
+        print(res)
+
+    def borrar_evento(self):
+        con = sql_connection()
+        miPack= self.v_evento.get(ANCHOR)
+        id= miPack[7]
+        res = eliminar_evento(con,id)
+        self.v_evento.delete(0, END)
+        eventos= listar_eventos(con)
+        self.v_evento.insert(0, *eventos)
+        print(res)
+
+
+    def exportar_evento(self):
+        print("Te amo mi vida hermosa! No espere llegar amarte tanto tanto!!!!!")
 
 
 class Application(ttk.Frame):
 
-        def tomar_foto(self):
+        def tomar_foto_entrada(self):
                 print("Proceso Iniciado")
                 # print(self.peso)
                 #######################################################
@@ -193,6 +328,49 @@ class Application(ttk.Frame):
 
                 # v_placa = Label(master, text = placa)
                 # v_placa.grid(row = 2, column = 1, sticky = W, pady = 2)
+
+        def tomar_foto_salida(self):
+                print("Proceso Salida Iniciado")
+                # print(self.peso)
+                #######################################################
+                cap = cv2.VideoCapture(0)
+                leido, frame = cap.read()
+                if leido == True:
+                	cv2.imwrite("foto.png", frame)
+                	print("Foto tomada correctamente")
+                else:
+                	print("Error al acceder a la cámara")
+                """
+                	Finalmente liberamos o soltamos la cámara
+                """
+                cap.release()
+
+                img = Image.open("foto.png")
+                image = img.resize((600,450), Image.ANTIALIAS)
+                photo = ImageTk.PhotoImage(image)
+                labelA = Label(master, image=photo)
+                labelA.image = photo
+                labelA.grid(row=0, column=4,  columnspan = 2, rowspan = 5, padx = 3, pady = 4)
+                #######################################################
+                placa = 'msd666'
+                miPack = array([placa])
+
+                con = sql_connection()
+                res= buscar_evento(con,miPack)
+                id = res[0]
+                peso_neto = res[1]
+                peso_out = self.peso
+                peso_carga = peso_neto - peso_out  ## SI EL PESO CARGA ES POSITIVO(DEJO CARGA), NEGATIVO(SACÓ CARGA)
+
+                # peso_in=
+                # peso_out=self.peso
+                # producto=int(self.v_producto.get())
+                miPack = array([id, peso_carga, peso_out])
+                con = sql_connection()
+                res= insert_evento_salida(con,miPack)
+                print(res)
+
+                self.v_placa.config(text=placa)
 
         def __init__(self, master):
                 super().__init__(master)
@@ -270,10 +448,13 @@ class Application(ttk.Frame):
 
                 # button widget
 
-                btnFoto = Button(master, text = "foto",command=self.tomar_foto)
+                btnIngreso = Button(master, text = "Ingreso",command=self.tomar_foto_entrada)
+                btnSalida = Button(master, text = "Salida",command=self.tomar_foto_salida)
 
                 # arranging button widgets
-                btnFoto.grid(row = 6, column = 0, columnspan = 2,  padx = 100, ipadx = 10,  pady = 1, sticky = E)
+                btnIngreso.grid(row = 6, column = 0, columnspan = 1, padx =5,   pady = 1, sticky = E)
+                btnSalida.grid(row = 6, column = 1, columnspan = 1,  ipadx =5,   pady = 1, sticky = E)
+
 
 
 master = tk.Tk()
