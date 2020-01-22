@@ -52,6 +52,13 @@ def listar_eventos(con):
     cursorObj.execute("select * from evento")
     rows = cursorObj.fetchall()
     return rows
+def listar_eventos_exportar(con):
+    cursorObj = con.cursor()
+    sql= "SELECT e.placa, e.fecha_in, e.fecha_out, e.peso_in, p.nombre FROM evento e"
+    sql= sql + " INNER JOIN producto p ON e.producto=p.id"
+    cursorObj.execute(sql)
+    rows = cursorObj.fetchall()
+    return rows
 
 ### listar usuarios
 def listar_usuarios(con):

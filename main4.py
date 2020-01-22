@@ -5,6 +5,8 @@ from tkinter import ttk
 
 
 from bd_sqlite import *
+from tabla import *
+from reconocimiento import *
 
 from datetime import date
 from datetime import datetime
@@ -14,6 +16,8 @@ import tkinter as tk
 from PIL import Image, ImageTk
 import os
 import cv2
+import csv
+
 
 global labelA
 global v_placa
@@ -28,6 +32,11 @@ def abrir_admin():
         global b2
         b2 = AdminP(admin)
 
+# def reconocer_placa(foto):
+#     aux = "La foto analizada es: "+foto
+#     print(aux)
+#     placa = "PGL420"
+#     return placa
 
 class AdminP(ttk.Frame):
 
@@ -36,7 +45,8 @@ class AdminP(ttk.Frame):
 
         admin.title("Panel de pestañas en Tcl/Tk")
 
-        self.notebook = ttk.Notebook(self,  width="600", height="450")
+
+        self.notebook = ttk.Notebook(self,  width="800", height="600")
 
         self.Login_frame = LoginFrame(self.notebook)
         self.notebook.add(
@@ -107,6 +117,8 @@ class AdminFrame(ttk.Frame):
         productos= listar_productos(con)
         usuarios= listar_usuarios(con)
         eventos= listar_eventos_hoy(con)
+        eventos2= listar_eventos_hoy(con)
+        eventos.insert(0, ['placa','fecha_in','fecha_out','peso_in','peso_out','peso_neto','producto','id'])
         ####################################################
         t_productos = Label(self, text = "Productos: ", relief="groove")
         t_productos.grid(row = 0, column = 0)
@@ -121,6 +133,8 @@ class AdminFrame(ttk.Frame):
         self.v_producto =tk.Listbox(self, height=len(productos),width=30)
         self.v_producto.insert(0, *productos)
         self.v_producto.grid(row = 2, column = 1, columnspan = 4,pady = 20)
+
+
 
         ##############################################
         t_usuarios = Label(self, text = "Usuarios: ", relief="groove")
@@ -151,6 +165,19 @@ class AdminFrame(ttk.Frame):
         self.v_evento =tk.Listbox(self, height=len(eventos),width=60)
         self.v_evento.insert(0, *eventos)
         self.v_evento.grid(row = 11, column = 1, columnspan=4,pady = 20)
+
+
+        # proyectos_headers =['placa','fecha_in','fecha_out','peso_in','peso_out','peso_neto','producto','id']
+        #
+        # self.proyectos_tab = Table(self, title="Proyectos Registrados", headers=proyectos_headers)
+        # self.proyectos_tab.grid(row=10, column=0, columnspan=4)
+        #
+        # #cursor.execute("SELECT Proyectos.Proyecto,Marca,Paquete FROM Proyectos")
+        # # cursor =
+        #
+        # for row in eventos2:
+        #    self.proyectos_tab.add_row(row)
+
 
 
     def abrir_producto(self):
@@ -285,8 +312,24 @@ class AdminFrame(ttk.Frame):
         self.v_evento.insert(0, *eventos)
         print(res)
 
-
     def exportar_evento(self):
+
+        # myData = [["first_name", "second_name", "Grade"],
+        #           ['Alex', 'Brian', 'A'],
+        #           ['Tom', 'Smith', 'B']]
+        con = sql_connection()
+        eventos= listar_eventos_exportar(con)
+        print(eventos)
+        eventos.insert(0, ['placa','fecha_in','fecha_out','peso_in','producto'])
+
+        #
+        myFile = open('eventosDATA.csv', 'w')
+        with myFile:
+            writer = csv.writer(myFile)
+            writer.writerows(eventos)
+
+
+        print("Writing complete")
         print("Te amo mi vida hermosa! No espere llegar amarte tanto tanto!!!!!")
 
 
@@ -315,10 +358,12 @@ class Application(ttk.Frame):
                 labelA.image = photo
                 labelA.grid(row=0, column=4,  columnspan = 2, rowspan = 5, padx = 3, pady = 4)
                 #######################################################
+
+                placa=reconocer_placa("camion.png")
                 fecha_in=datetime.now()
                 peso_neto=self.peso
                 producto=int(self.v_producto.get())
-                placa = 'msd666'
+                # placa = 'msd666'
                 miPack = array([placa, fecha_in, peso_neto, producto])
                 con = sql_connection()
                 res= insert_evento(con,miPack)
@@ -352,7 +397,7 @@ class Application(ttk.Frame):
                 labelA.image = photo
                 labelA.grid(row=0, column=4,  columnspan = 2, rowspan = 5, padx = 3, pady = 4)
                 #######################################################
-                placa = 'msd666'
+                placa = reconocer_placa("foto.png")
                 miPack = array([placa])
 
                 con = sql_connection()
